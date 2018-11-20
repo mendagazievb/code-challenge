@@ -23,27 +23,6 @@ const curry = function () {
   }
 };
 
-const assert = (a, b) => {
-  if (a !== b) {
-    throw new Error(`value ${a} is not equal to the ${b}`);
-  }
-};
-
-const abc = function (a, b, c) {
-  return a + b + c;
-};
-
-const abcdef = function (a, b, c, d, e, f) {
-  return a + b + c + d + e + f;
-};
-
-assert(curry(abc)('A')('B')('C'), 'ABC');
-assert(curry(abc)('A', 'B')('C'), 'ABC');
-assert(curry(abc)('A', 'B', 'C'), 'ABC');
-
-assert(curry('A')('B')('C')('D')('E')('F')(abcdef), 'ABCDEF');
-assert(curry('A', 'B', 'C')('D', 'E', 'F')(abcdef), 'ABCDEF');
-
 /**
  * Второй вариант реализации из примера в readme abc.curry('A')('B')('C');
  * Изменяется стандартный прототип, думаю это не самая удачная идея
@@ -59,13 +38,39 @@ Function.prototype.curry = function () {
   } else {
     return Function.prototype.curry.bind({_callback, _filterArgs})
   }
-
 };
 
+/**
+ * Сравнение двух переданных аргументов
+ * @param a - первый параметр
+ * @param b - второй параметр
+ */
+const assert = (a, b) => {
+  if (a !== b) {
+    throw new Error(`value ${a} is not equal to the ${b}`);
+  }
+};
+
+const abc = function (a, b, c) {
+  return a + b + c;
+};
+
+const abcdef = function (a, b, c, d, e, f) {
+  return a + b + c + d + e + f;
+};
+
+// Проверка функции curry
+assert(curry(abc)('A')('B')('C'), 'ABC');
+assert(curry(abc)('A', 'B')('C'), 'ABC');
+assert(curry(abc)('A', 'B', 'C'), 'ABC');
+
+assert(curry('A')('B')('C')('D')('E')('F')(abcdef), 'ABCDEF');
+assert(curry('A', 'B', 'C')('D', 'E', 'F')(abcdef), 'ABCDEF');
+
+// Проверка метода curry
 assert(abc.curry('A')('B')('C'), 'ABC');
 assert(abc.curry('A', 'B')('C'), 'ABC');
 assert(abc.curry('A', 'B', 'C'), 'ABC');
 
 assert(abcdef.curry('A')('B')('C')('D')('E')('F'), 'ABCDEF');
 assert(abcdef.curry('A', 'B', 'C')('D', 'E', 'F'), 'ABCDEF');
-
