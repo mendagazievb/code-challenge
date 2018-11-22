@@ -1,58 +1,46 @@
 /**
- * Создает глубокую копию объекта
- * @param obj {Object|Array}
- * @return {Object|Array}
+ * Проверка полученного значения на объект,
+ * если тип равен объекту, то выполняем рекурсию
+ * @param {*} val - значение
+ * @returns {*}
+ */
+const getValue = (val) => {
+  return typeof val === 'object' ? cloneDeep(val) : val;
+};
+
+/**
+ * Выполнение копирования объекта
+ * @param {*} obj
+ * @return {*}
  */
 const cloneDeep = function (obj) {
+  if (!obj) return obj;
+
+  let cloneObject = null;
   // Получаем тип параметра obj
   const typeObject = Object.prototype.toString.call(obj).slice(8, -1);
-  let cloneObject = null;
+
+  if (typeObject === 'Date') {
+    cloneObject = new Date(obj);
+  }
 
   if (typeObject === 'Object') {
     cloneObject = {};
 
     for (let [key, val] of Object.entries(obj)) {
-      // Если тип значения равен объекту, то вызываем функию снова
-      cloneObject[key] = typeof val === 'object' ? cloneDeep(val) : val;
+      cloneObject[key] = getValue(val);
     }
+  }
 
-  } else if (typeObject === 'Array') {
-    // Получаем копию массива
+  if (typeObject === 'Array') {
     cloneObject = [];
 
     obj.forEach((item) => {
-      if (typeof item === 'object') {
-        cloneObject.push(cloneDeep(item))
-      } else {
-        cloneObject.push(item);
-      }
+      cloneObject.push(getValue(item));
     });
   }
 
   return cloneObject;
 };
 
-// Проверка cloneDeep
-let obj = {
-  a: 1,
-  getContext() {
-    console.log(this)
-  },
-  next: {
-    a: 2,
-    b: [{name: 'john', link: {url: 'link', image: 'src'}}, {name: 'doe',link: {url: 'link', image: 'src'}}],
-    next: {
-      a: {array: [1, 2, 3]}
-    }
-  }
-};
-
-
-let clone = cloneDeep(obj);
-obj.next.b[0].name = 'change';
-obj.next.b[1].link.image = 'change';
-
-// Проверяем на изменение
-
-assert(clone.next.b[0].name, 'john');
-assert(clone.next.b[1].link.image, 'src');
+export default cloneDeep;
